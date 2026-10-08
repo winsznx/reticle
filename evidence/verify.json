@@ -1,0 +1,111 @@
+{
+  "source": "scripts/verify.ts",
+  "timestamp": "2026-10-08T23:32:08.642Z",
+  "circuits": "0x9FcbE4974C761d361d36CEE6734e381843a072BC",
+  "renderer": "0x807df960078e4e8b3079ef04879b05a8852a197a",
+  "summary": {
+    "designs": 9,
+    "passed": 9
+  },
+  "results": [
+    {
+      "designId": "xor",
+      "circuitId": 1,
+      "gates": 36,
+      "total": 1024,
+      "directEval": 1024,
+      "viaRenderer": 1024,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "sierpinski",
+      "circuitId": 2,
+      "gates": 90,
+      "total": 1024,
+      "directEval": 1024,
+      "viaRenderer": 1024,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "plaid",
+      "circuitId": 3,
+      "gates": 36,
+      "total": 1024,
+      "directEval": 1024,
+      "viaRenderer": 1024,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "rings",
+      "circuitId": 4,
+      "gates": 77,
+      "total": 1024,
+      "directEval": 1024,
+      "viaRenderer": 1024,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "weave",
+      "circuitId": 5,
+      "gates": 39,
+      "total": 1024,
+      "directEval": 1024,
+      "viaRenderer": 1024,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "drift",
+      "circuitId": 6,
+      "gates": 71,
+      "total": 4096,
+      "directEval": 4096,
+      "viaRenderer": 4096,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "crosshair",
+      "circuitId": 7,
+      "gates": 61,
+      "total": 256,
+      "directEval": 256,
+      "viaRenderer": 256,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "mark",
+      "circuitId": 8,
+      "gates": 75,
+      "total": 256,
+      "directEval": 256,
+      "viaRenderer": 256,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    },
+    {
+      "designId": "badge",
+      "circuitId": 9,
+      "gates": 80,
+      "total": 256,
+      "directEval": 256,
+      "viaRenderer": 256,
+      "svgEqualsClientSvg": true,
+      "pass": true
+    }
+  ],
+  "tamper": {
+    "gate": 4,
+    "differsAfterMutation": true
+  },
+  "badShape": {
+    "checked": "0x839bdD6fa7A66416A609A735e11DE5411B98574e #1",
+    "reverted": true
+  },
+  "budgetRefused": true
+}

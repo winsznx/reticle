@@ -1,0 +1,173 @@
+[
+  {
+    "designId": "xor",
+    "circuitId": 1,
+    "gates": 36,
+    "naiveGates": 2480,
+    "w": 32,
+    "frames": 1,
+    "tapeoutTx": "0xb6b968e369c4384a2a11baa8e4a2482fc65f3d17a5bf9eddc76c99a361517976",
+    "mintTx": "0x0c360267b09d22521a9d489dcc2bec3499047679935d8fd7b8b789f61fdd3d4d",
+    "block": 72732883,
+    "tapeoutAckMs": 2905,
+    "tapeoutCompletionMs": 3905,
+    "renderMs": 3747,
+    "match": {
+      "total": 1024,
+      "matched": 1024
+    },
+    "timestamp": "2026-10-08T23:25:23.573Z"
+  },
+  {
+    "designId": "sierpinski",
+    "circuitId": 2,
+    "gates": 90,
+    "naiveGates": 1326,
+    "w": 32,
+    "frames": 1,
+    "tapeoutTx": "0x5382784cf89070d16d30a349c8ce1e5ded9f283b0e5f0f481755d6cfd9240155",
+    "mintTx": null,
+    "block": 72732918,
+    "tapeoutAckMs": 4816,
+    "tapeoutCompletionMs": 5251,
+    "renderMs": 3155,
+    "match": {
+      "total": 1024,
+      "matched": 1024
+    },
+    "timestamp": "2026-10-08T23:25:57.523Z"
+  },
+  {
+    "designId": "plaid",
+    "circuitId": 3,
+    "gates": 36,
+    "naiveGates": 2608,
+    "w": 32,
+    "frames": 1,
+    "tapeoutTx": "0x358a090692e1d846308ae3ca4976de05025d9b8bdb9fec1023f35146b9082d87",
+    "mintTx": null,
+    "block": 72732927,
+    "tapeoutAckMs": 4058,
+    "tapeoutCompletionMs": 4729,
+    "renderMs": 3233,
+    "match": {
+      "total": 1024,
+      "matched": 1024
+    },
+    "timestamp": "2026-10-08T23:26:06.792Z"
+  },
+  {
+    "designId": "rings",
+    "circuitId": 4,
+    "gates": 77,
+    "naiveGates": 2568,
+    "w": 32,
+    "frames": 1,
+    "tapeoutTx": "0xc3995a08143942df7ba286b34a1f10671de2f4fadfa0246f8b7c278a900a8650",
+    "mintTx": null,
+    "block": 72732937,
+    "tapeoutAckMs": 4566,
+    "tapeoutCompletionMs": 5145,
+    "renderMs": 3278,
+    "match": {
+      "total": 1024,
+      "matched": 1024
+    },
+    "timestamp": "2026-10-08T23:26:16.667Z"
+  },
+  {
+    "designId": "weave",
+    "circuitId": 5,
+    "gates": 39,
+    "naiveGates": 2480,
+    "w": 32,
+    "frames": 1,
+    "tapeoutTx": "0xd60ed07f0d28554c39b29bd89f26be4454fc054480571c9e372aa3b8f11fd2c3",
+    "mintTx": null,
+    "block": 72732947,
+    "tapeoutAckMs": 4406,
+    "tapeoutCompletionMs": 7156,
+    "renderMs": 3888,
+    "match": {
+      "total": 1024,
+      "matched": 1024
+    },
+    "timestamp": "2026-10-08T23:26:29.125Z"
+  },
+  {
+    "designId": "drift",
+    "circuitId": 6,
+    "gates": 71,
+    "naiveGates": 14208,
+    "w": 32,
+    "frames": 4,
+    "tapeoutTx": "0x0dd1eea87c81d1d00cc4f4e543e85c3dad00a4316bbb529e94dcb059f5c50c52",
+    "mintTx": null,
+    "block": 72732960,
+    "tapeoutAckMs": 4728,
+    "tapeoutCompletionMs": 6670,
+    "renderMs": 10417,
+    "match": {
+      "total": 4096,
+      "matched": 4096
+    },
+    "timestamp": "2026-10-08T23:26:47.564Z"
+  },
+  {
+    "designId": "crosshair",
+    "circuitId": 7,
+    "gates": 61,
+    "naiveGates": 400,
+    "w": 16,
+    "frames": 1,
+    "tapeoutTx": "0x52d62ae5094647512f6ba163e98125c05481af94c50a2a527f0fde63fdae679d",
+    "mintTx": null,
+    "block": 72732978,
+    "tapeoutAckMs": 4208,
+    "tapeoutCompletionMs": 8774,
+    "renderMs": 2535,
+    "match": {
+      "total": 256,
+      "matched": 256
+    },
+    "timestamp": "2026-10-08T23:27:00.773Z"
+  },
+  {
+    "designId": "mark",
+    "circuitId": 8,
+    "gates": 75,
+    "naiveGates": 516,
+    "w": 16,
+    "frames": 1,
+    "tapeoutTx": "0x07de1d98a5d60aeaddafccfe3c311cb9f036340e87060799d19426afaef229e9",
+    "mintTx": null,
+    "block": 72732991,
+    "tapeoutAckMs": 4668,
+    "tapeoutCompletionMs": 5126,
+    "renderMs": 2716,
+    "match": {
+      "total": 256,
+      "matched": 256
+    },
+    "timestamp": "2026-10-08T23:27:10.022Z"
+  },
+  {
+    "designId": "badge",
+    "circuitId": 9,
+    "gates": 80,
+    "naiveGates": 498,
+    "w": 16,
+    "frames": 1,
+    "tapeoutTx": "0xae37b7ab424f2472361d418defc94501ef6961f54d614cf7b6a298867b3ff7a2",
+    "mintTx": null,
+    "block": 72733000,
+    "tapeoutAckMs": 4437,
+    "tapeoutCompletionMs": 5415,
+    "renderMs": 2484,
+    "match": {
+      "total": 256,
+      "matched": 256
+    },
+    "timestamp": "2026-10-08T23:27:19.268Z"
+  }
+]

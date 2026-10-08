@@ -1,1 +1,30 @@
-{}
+{
+  "chainId": 196,
+  "deployer": "0x7945ffB152e7c6CE8f479F5A24874C57A8B9e19D",
+  "processor": {
+    "name": "Reticle",
+    "symbol": "RTCL",
+    "story": "Reticle: images that are circuits. Every image is a NAND circuit and renders from its own eval, wallet-free and gas-free for viewers. Ink = transistors. Supply cap 1,048,576 (shared NAND/LATCH), price 0.00003 OKB each, no other cap, immutable at deploy. One transistor burns per gate at tapeout. Mint proceeds go to the creator via owed()/withdraw(). Built on TapeOut upgradeable beacon contracts, unaudited.",
+    "transistorSupply": "1048576",
+    "mintPrice": "30000000000000",
+    "circuits": "0x9FcbE4974C761d361d36CEE6734e381843a072BC",
+    "transistors": "0x9d9Bb3CEC5fe8654D7b089C0dD03bcAeCF4F6045",
+    "deployTx": "0xd0e6ddbc25fa520eb5f925247e192cc9cc74319bf8c17977d9b7714ee514d8b1",
+    "deployBlock": 72732831,
+    "ackMs": 4684,
+    "completionMs": 7326
+  },
+  "renderer": {
+    "address": "0x807df960078e4e8b3079ef04879b05a8852a197a",
+    "deployTx": "0xb611971594e514e607c4084381f1234b8b7aea10a5b4a6de7a275237a1bb9f1a",
+    "deployBlock": 72733175
+  },
+  "previousRenderers": [
+    {
+      "address": "0xc69c3b7863cc1c7406a5335d68577dc37ca7dd5d",
+      "deployTx": "0x8bcaf2b54415035fde68722381d0c411c4336a625a2dce70e9422f77474500f9",
+      "deployBlock": 72732867,
+      "note": "replaced: svg() built its string with quadratic memory growth and exceeded the 50M eth_call gas cap"
+    }
+  ]
+}

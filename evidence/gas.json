@@ -1,0 +1,92 @@
+{
+  "source": "scripts/measure-gas.ts",
+  "timestamp": "2026-10-08T23:30:27.690Z",
+  "ethCallGasCap": 50000000,
+  "gasPerGate": 9948,
+  "svgBudget": 40000000,
+  "capNote": "default eth_call gas on rpc.xlayer.tech, read from its out-of-gas error; an explicit gas field is accepted far above it",
+  "rule": "svg() is used when gates * W * gasPerGate < 0.8 * eth_call gas cap, otherwise per-row eval",
+  "samples": [
+    {
+      "designId": "xor",
+      "circuitId": 1,
+      "gates": 36,
+      "w": 32,
+      "svgGas": 11460511,
+      "gasPerGateRow": 9948,
+      "callMs": 672
+    },
+    {
+      "designId": "sierpinski",
+      "circuitId": 2,
+      "gates": 90,
+      "w": 32,
+      "svgGas": 9373836,
+      "gasPerGateRow": 3255,
+      "callMs": 464
+    },
+    {
+      "designId": "plaid",
+      "circuitId": 3,
+      "gates": 36,
+      "w": 32,
+      "svgGas": 5663075,
+      "gasPerGateRow": 4916,
+      "callMs": 1116
+    },
+    {
+      "designId": "rings",
+      "circuitId": 4,
+      "gates": 77,
+      "w": 32,
+      "svgGas": 10734969,
+      "gasPerGateRow": 4357,
+      "callMs": 973
+    },
+    {
+      "designId": "weave",
+      "circuitId": 5,
+      "gates": 39,
+      "w": 32,
+      "svgGas": 6245553,
+      "gasPerGateRow": 5004,
+      "callMs": 647
+    },
+    {
+      "designId": "drift",
+      "circuitId": 6,
+      "gates": 71,
+      "w": 32,
+      "svgGas": 8223089,
+      "gasPerGateRow": 3619,
+      "callMs": 467
+    },
+    {
+      "designId": "crosshair",
+      "circuitId": 7,
+      "gates": 61,
+      "w": 16,
+      "svgGas": 3044701,
+      "gasPerGateRow": 3120,
+      "callMs": 671
+    },
+    {
+      "designId": "mark",
+      "circuitId": 8,
+      "gates": 75,
+      "w": 16,
+      "svgGas": 3448150,
+      "gasPerGateRow": 2873,
+      "callMs": 613
+    },
+    {
+      "designId": "badge",
+      "circuitId": 9,
+      "gates": 80,
+      "w": 16,
+      "svgGas": 3966802,
+      "gasPerGateRow": 3099,
+      "callMs": 620
+    }
+  ]
+}

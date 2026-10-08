@@ -3,10 +3,12 @@ import { formatEther, type Hex } from "viem";
 import { deployer, loadFacts, oklinkAddr, oklinkTx, publicClient, saveFacts } from "./lib";
 
 const facts = loadFacts();
-if (facts.renderer) {
+const redeploy = process.argv.includes("--redeploy");
+if (facts.renderer && !redeploy) {
   console.log("renderer already deployed:", facts.renderer.address);
   process.exit(0);
 }
+if (facts.renderer) facts.previousRenderers = [...(facts.previousRenderers ?? []), { ...facts.renderer, note: "replaced: svg() built its string with quadratic memory growth and exceeded the 50M eth_call gas cap" }];
 const artifact = JSON.parse(readFileSync(new URL("../contracts/out/ReticleRenderer.sol/ReticleRenderer.json", import.meta.url), "utf8"));
 const bytecode = artifact.bytecode.object as Hex;
 const { account, wallet } = deployer();

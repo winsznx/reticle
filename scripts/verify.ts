@@ -36,13 +36,13 @@ for (const t of taped) {
   console.log(t.designId, `#${t.circuitId}`, `${direct}/${total}`, viaRenderer === null ? "" : `renderer ${viaRenderer}/${total}`, svgEqual === null ? "" : `svg ${svgEqual}`);
 }
 
-const first = loadDesign(taped[0]!.designId);
+const first = loadDesign([...taped].sort((a, b) => b.gates - a.gates)[0]!.designId);
 const bm = designBitmap(first);
 const compiled = compileBitmap(bm);
 const net: Netlist = { nIn: compiled.shape.nIn, nOut: compiled.shape.nOut, gates: compiled.netlist.gates.map((g) => ({ ...g })) };
 let tamper: { gate: number; differsAfterMutation: boolean } | null = null;
-for (let g = Math.floor(net.gates.length / 2); g < net.gates.length - net.nOut; g++) {
-  const mutated: Netlist = { ...net, gates: net.gates.map((x, i) => (i === g ? { a: x.a, b: x.a === 0 ? 1 : 0 } : x)) };
+for (let g = 0; g < net.gates.length; g++) {
+  const mutated: Netlist = { ...net, gates: net.gates.map((x, i) => (i === g ? { a: x.a, b: x.b === 1 ? 0 : 1 } : x)) };
   const m = matchesBitmap(encodeNetlist(mutated), bm);
   if (m.matched !== m.total) { tamper = { gate: g, differsAfterMutation: true }; break; }
 }

@@ -54,6 +54,7 @@ export interface Facts {
     completionMs: number;
   };
   renderer?: { address: Address; deployTx: Hex; deployBlock: number };
+  previousRenderers?: { address: Address; deployTx: Hex; deployBlock: number; note: string }[];
   repo?: string;
   site?: string;
 }

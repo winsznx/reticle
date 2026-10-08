@@ -1,0 +1,24 @@
+[
+  {
+    "tx": "0x0c360267b09d22521a9d489dcc2bec3499047679935d8fd7b8b789f61fdd3d4d",
+    "block": 72732879,
+    "amount": 36,
+    "id": 0,
+    "mintPrice": "30000000000000",
+    "protocolFee": "660000000000000",
+    "value": "1740000000000000",
+    "purpose": "ink for tapeout of design 'xor' (36 gates)",
+    "timestamp": "2026-10-08T23:25:15.473Z"
+  },
+  {
+    "tx": "0x60747d205d023447b7a36316d121ac29e3a158558906b3d2243d2714a94d8031",
+    "block": 72732906,
+    "amount": 529,
+    "id": 0,
+    "mintPrice": "30000000000000",
+    "protocolFee": "660000000000000",
+    "value": "16530000000000000",
+    "purpose": "ink for tapeouts of designs: badge, crosshair, drift, mark, plaid, rings, sierpinski, weave (529 gates)",
+    "timestamp": "2026-10-08T23:25:43.162Z"
+  }
+]
