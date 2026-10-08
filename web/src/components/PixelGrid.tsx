@@ -27,8 +27,8 @@ export function PixelGrid({ w, frame, tool, mirror, onStroke, readOnly }: Props)
     const cell = Math.max(4, Math.floor((box * dpr) / w));
     c.width = cell * w;
     c.height = cell * w;
-    c.style.width = `${(cell * w) / dpr}px`;
-    c.style.height = `${(cell * w) / dpr}px`;
+    c.style.width = "100%";
+    c.style.height = "auto";
     const ctx = c.getContext("2d")!;
     ctx.fillStyle = "#F2EFE6";
     ctx.fillRect(0, 0, c.width, c.height);

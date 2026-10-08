@@ -4,5 +4,11 @@
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
-  "dependencies": { "viem": "^2.21.0", "@reticle/compile": "workspace:*" }
+  "dependencies": {
+    "viem": "^2.21.0",
+    "@reticle/compile": "workspace:*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
 }

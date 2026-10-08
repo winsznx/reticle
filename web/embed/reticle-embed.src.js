@@ -43,9 +43,9 @@
   function evalRow(addr, id, yBits, nIn, frame, y) {
     var input = ((y | (frame << yBits)) & 255).toString(16).padStart(2, "0").padEnd(64, "0");
     return call(addr, "0x934d06ea" + word(id) + word(64) + word(1) + input).then(function (h) {
-      var len = slot(h, 1), row = [];
+      var row = [];
       for (var x = 0; x < (1 << yBits); x++) row.push(((parseInt(h.substr(2 + 128 + (x >> 3) * 2, 2), 16) >> (x & 7)) & 1) === 1);
-      return len ? row : [];
+      return row;
     });
   }
 
@@ -61,8 +61,8 @@
 
   function viaRenderer(addr, id, frame) {
     return call(RENDERER, "0xb9a4e835" + addr.slice(2).toLowerCase().padStart(64, "0") + word(id) + word(frame)).then(function (h) {
-      var len = slot(h, 2), bytes = new Uint8Array(len);
-      for (var i = 0; i < len; i++) bytes[i] = parseInt(h.substr(2 + 192 + i * 2, 2), 16);
+      var len = slot(h, 1), bytes = new Uint8Array(len);
+      for (var i = 0; i < len; i++) bytes[i] = parseInt(h.substr(2 + 128 + i * 2, 2), 16);
       return new TextDecoder().decode(bytes);
     });
   }
