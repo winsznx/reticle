@@ -1,0 +1,12 @@
+{
+  "source": "scripts/film/capture.ts --live",
+  "note": "Drawn in the web app by a scripted cursor, signed by the deployer key through a local wallet bridge. Not a design file.",
+  "circuitId": 10,
+  "w": 16,
+  "gates": 50,
+  "mintTx": "0x11de88170636a3dbe12fce43ab72456269016f6c7aa2d358aa29c0ccf3491296",
+  "tapeoutTx": "0xca95bce5a1181fd4876c9d148c5827b00a38d316513beb4a68a822ab8bddd62b",
+  "tapeoutBlock": 72733582,
+  "endToEndSeconds": 17.9,
+  "result": "pixel-perfect per the app (cause strip reached the verified state)"
+}

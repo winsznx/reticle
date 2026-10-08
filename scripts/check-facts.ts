@@ -14,7 +14,7 @@ const known = new Set<string>(
     "0x1f09DAeFA827f02CBb40967cc91b259763760761", "0xf70d1ed4f62cf3780157b0b421b7e2f45bd0991c", "0x977f217887e085d298cb3819cdad5a0ee35f29b2",
     "0xd6EFb7adCc9c83dC4924Ad56f6a8E4e969b9ADB6", "0x536adD8F30f03b69f6fbF29d425A816A0dC50106", "0x68809Fd2fb343aA57D0aeB7f33Defe477c9666f9",
     "0x839bdD6fa7A66416A609A735e11DE5411B98574e", "0x0000000000000000000000000000000000000001",
-    facts.deployer, facts.processor?.circuits, facts.processor?.transistors, facts.renderer?.address,
+    facts.deployer, ...(facts.previousRenderers ?? []).map((r) => r.address), facts.processor?.circuits, facts.processor?.transistors, facts.renderer?.address,
   ].filter((a): a is string => !!a).map((a) => a.toLowerCase()),
 );
 

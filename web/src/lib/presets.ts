@@ -1,4 +1,4 @@
-import { designs, verifiedDesignIds, type DesignFile } from "./data";
+import { designs, verifiedDesignIds, webSession, type DesignFile } from "./data";
 
 export interface Preset {
   id: string;
@@ -24,4 +24,4 @@ const all: Preset[] = designs
 
 /* A preset is only offered once its circuit has been taped out and verified against the chain. */
 export const PRESETS: Preset[] = all.filter((p) => p.liveVerified || showAll);
-export const drawPathVerified = designs.some((d) => d.kind === "drawn" && verifiedDesignIds.has(d.id)) || showAll;
+export const drawPathVerified = designs.some((d) => d.kind === "drawn" && verifiedDesignIds.has(d.id)) || webSession !== null || showAll;

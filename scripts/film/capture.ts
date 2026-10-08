@@ -6,13 +6,14 @@
  */
 import { chromium, type Page } from "playwright";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readdirSync, renameSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { loadFacts, readJson } from "../lib";
 
 const base = process.env.BASE_URL ?? "http://localhost:4173";
 const live = process.argv.includes("--live");
 const out = new URL("../../film/", import.meta.url).pathname;
 mkdirSync(out, { recursive: true });
+for (const f of readdirSync(out)) if (/\.(webm|mp4|gif)$/.test(f)) unlinkSync(`${out}${f}`);
 
 const marks: { t: number; name: string }[] = [];
 const t0 = Date.now();
@@ -58,9 +59,7 @@ if (live) {
     }
     return publicClient.request({ method: method as never, params: params as never });
   });
-  await page.addInitScript(() => {
-    (window as unknown as { ethereum: unknown }).ethereum = { request: ({ method, params }: { method: string; params?: unknown[] }) => (window as unknown as { __rpc: (m: string, p: unknown[]) => Promise<unknown> }).__rpc(method, params ?? []), on() {} };
-  });
+  await page.addInitScript(`window.ethereum = { request: (a) => window.__rpc(a.method, a.params || []), on() {} };`);
 }
 
 await page.goto(base);
@@ -80,6 +79,7 @@ await page.waitForTimeout(1800);
 
 if (live) {
   await page.getByRole("button", { name: "Connect wallet" }).click();
+  await page.getByRole("button", { name: /^Tape out$/ }).waitFor({ timeout: 20_000 }).catch(async () => { throw new Error(`tape out button missing, found: ${await page.locator("aside button").allInnerTexts()} cause: ${await page.locator(".cause").innerText()}`); });
   await page.getByRole("button", { name: "Tape out" }).click();
   mark("tapeout-clicked");
   await page.locator('.cause[data-state="ok"]').waitFor({ timeout: 180_000 });
@@ -111,8 +111,9 @@ const webm = readdirSync(out).filter((f) => f.endsWith(".webm")).map((f) => `${o
 if (webm) {
   const final = `${out}session.webm`;
   renameSync(webm, final);
-  execFileSync("ffmpeg", ["-y", "-i", final, "-vf", "fps=12,scale=960:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=none", `${out}session.gif`], { stdio: "ignore" });
+  execFileSync("ffmpeg", ["-y", "-i", final, "-vf", "fps=8,scale=800:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=48[p];[b][p]paletteuse=dither=none", `${out}session.gif`], { stdio: "ignore" });
   execFileSync("ffmpeg", ["-y", "-i", final, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "24", "-movflags", "+faststart", `${out}session.mp4`], { stdio: "ignore" });
 }
+copyFileSync(`${out}session.gif`, new URL("../../docs/session.gif", import.meta.url).pathname);
 writeFileSync(`${out}marks.json`, JSON.stringify({ base, live, marks, facts: { processor: loadFacts().processor?.circuits, tapeouts: readJson<unknown[]>("evidence/tapeouts.json", []).length } }, null, 2));
 console.log("film written to", out);

@@ -20,5 +20,16 @@
     "value": "16530000000000000",
     "purpose": "ink for tapeouts of designs: badge, crosshair, drift, mark, plaid, rings, sierpinski, weave (529 gates)",
     "timestamp": "2026-10-08T23:25:43.162Z"
+  },
+  {
+    "tx": "0x11de88170636a3dbe12fce43ab72456269016f6c7aa2d358aa29c0ccf3491296",
+    "block": 72733577,
+    "amount": 50,
+    "id": 0,
+    "mintPrice": "30000000000000",
+    "protocolFee": "660000000000000",
+    "value": "2160000000000000",
+    "purpose": "ink for the browser-drawn live test piece (circuit #10, 50 gates), made through the web app with scripted input to prove the draw path end to end",
+    "timestamp": "2026-10-08T23:36:00Z"
   }
 ]

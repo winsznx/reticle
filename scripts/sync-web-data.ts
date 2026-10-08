@@ -12,6 +12,7 @@ put("verify.json", readJson("evidence/verify.json", null));
 put("bench.json", readJson("evidence/bench.json", null));
 put("phase0.json", readJson("evidence/phase0.json", null));
 put("gas.json", readJson("evidence/gas.json", null));
+put("webSession.json", readJson("evidence/web-session.json", null));
 put("mints.json", readJson("evidence/mints.json", []));
 put("designs.json", allDesignIds().map((id) => loadDesign(id)));
 console.log("web data synced");

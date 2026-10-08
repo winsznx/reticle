@@ -180,3 +180,4 @@ main { min-height: calc(100vh - 52px - 120px); }
 .code { max-width: 100%; }
 @media (max-width: 900px) { aside.panel { position: static !important; } }
 [style*="display: grid"] { grid-template-columns: minmax(0, 1fr); }
+.code pre { white-space: pre-wrap; word-break: break-all; padding-right: 80px; }

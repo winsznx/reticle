@@ -57,7 +57,7 @@ export default function Landing() {
             {replay ? (
               <figure style={{ margin: 0 }}>
                 <video src="/replay.mp4" autoPlay loop muted playsInline style={{ width: "100%", border: "1px solid var(--rule)" }} />
-                <figcaption className="faint mono" style={{ fontSize: 11, marginTop: 6 }}>Real session on mainnet, sped up. Scripted cursor.</figcaption>
+                <figcaption className="faint mono" style={{ fontSize: 11, marginTop: 6 }}>Real session on mainnet: drawn, minted, taped out and read back from chain. Scripted cursor.</figcaption>
               </figure>
             ) : (
               <div className="panel">

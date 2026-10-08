@@ -4,6 +4,7 @@ import verifyRaw from "../generated/verify.json";
 import benchRaw from "../generated/bench.json";
 import phase0Raw from "../generated/phase0.json";
 import gasRaw from "../generated/gas.json";
+import webSessionRaw from "../generated/webSession.json";
 import mintsRaw from "../generated/mints.json";
 import designsRaw from "../generated/designs.json";
 import type { Address, Hex } from "viem";
@@ -49,6 +50,7 @@ export const bench = benchRaw as null | {
 export const phase0 = phase0Raw as null | { timestamp: string; blockNumber: number; deployFee: string; protocolFee: string; cpuCount: number; summary: { tested: number; passed: number; skipped: number }; ethCallGasCap: { maxGas?: number }; gasPerGate: { min: number; max: number } | null };
 export const gas = gasRaw as null | { gasPerGate?: number; svgBudget?: number };
 export const mints = mintsRaw as { tx: Hex; amount: number; purpose: string; block: number }[];
+export const webSession = webSessionRaw as null | { circuitId: number; gates: number; tapeoutTx: Hex; mintTx: Hex };
 export const designs = designsRaw as DesignFile[];
 
 export const verifiedDesignIds = new Set((verify?.results ?? []).filter((r) => r.pass).map((r) => r.designId));
