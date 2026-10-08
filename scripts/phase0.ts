@@ -69,7 +69,7 @@ for (const c of candidates) {
   }
   let evalGas: number | undefined;
   try {
-    evalGas = Number(await client.estimateContractGas({ address: c.processor, abi: circuitsAbi, functionName: "eval", args: [c.id, hex(inputBytes(total - 1, c.nIn))], account: "0x0000000000000000000000000000000000000001" }));
+    evalGas = Number(await client.estimateGas({ to: c.processor, account: "0x0000000000000000000000000000000000000001", data: encodeFunctionData({ abi: circuitsAbi, functionName: "eval", args: [c.id, hex(inputBytes(total - 1, c.nIn))] }) }));
   } catch {}
   checks.push({ ...base, netlistBytes: bytes.length, inputsTested: total, match: mismatches === 0, mismatches, netlistGateCount: decoded.length, evalGas, gasPerGate: evalGas ? Math.round(evalGas / Math.max(1, decoded.length)) : undefined });
   console.log(c.name, `#${c.id}`, `nIn=${c.nIn} nOut=${c.nOut} gates=${c.gates} bytesGates=${decoded.length}`, mismatches === 0 ? "MATCH" : `MISMATCH x${mismatches}/${total}`);

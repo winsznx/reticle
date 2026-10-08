@@ -1,0 +1,121 @@
+{
+  "source": "scripts/bench.ts",
+  "timestamp": "2026-10-08T22:11:35.627Z",
+  "rows": [
+    {
+      "id": "badge",
+      "kind": "drawn",
+      "w": 16,
+      "frames": 1,
+      "gates": 80,
+      "naive": 498,
+      "ratio": 0.1606,
+      "gatesPerPixel": 0.3125,
+      "compileMs": 3,
+      "simMatch": "256/256"
+    },
+    {
+      "id": "crosshair",
+      "kind": "drawn",
+      "w": 16,
+      "frames": 1,
+      "gates": 61,
+      "naive": 400,
+      "ratio": 0.1525,
+      "gatesPerPixel": 0.2383,
+      "compileMs": 1,
+      "simMatch": "256/256"
+    },
+    {
+      "id": "drift",
+      "kind": "formula",
+      "w": 32,
+      "frames": 4,
+      "gates": 71,
+      "naive": 14208,
+      "ratio": 0.005,
+      "gatesPerPixel": 0.0173,
+      "compileMs": 12,
+      "simMatch": "4096/4096"
+    },
+    {
+      "id": "mark",
+      "kind": "drawn",
+      "w": 16,
+      "frames": 1,
+      "gates": 75,
+      "naive": 516,
+      "ratio": 0.1453,
+      "gatesPerPixel": 0.293,
+      "compileMs": 1,
+      "simMatch": "256/256"
+    },
+    {
+      "id": "plaid",
+      "kind": "formula",
+      "w": 32,
+      "frames": 1,
+      "gates": 36,
+      "naive": 2608,
+      "ratio": 0.0138,
+      "gatesPerPixel": 0.0352,
+      "compileMs": 1,
+      "simMatch": "1024/1024"
+    },
+    {
+      "id": "rings",
+      "kind": "formula",
+      "w": 32,
+      "frames": 1,
+      "gates": 77,
+      "naive": 2568,
+      "ratio": 0.03,
+      "gatesPerPixel": 0.0752,
+      "compileMs": 2,
+      "simMatch": "1024/1024"
+    },
+    {
+      "id": "sierpinski",
+      "kind": "formula",
+      "w": 32,
+      "frames": 1,
+      "gates": 90,
+      "naive": 1326,
+      "ratio": 0.0679,
+      "gatesPerPixel": 0.0879,
+      "compileMs": 1,
+      "simMatch": "1024/1024"
+    },
+    {
+      "id": "weave",
+      "kind": "formula",
+      "w": 32,
+      "frames": 1,
+      "gates": 39,
+      "naive": 2480,
+      "ratio": 0.0157,
+      "gatesPerPixel": 0.0381,
+      "compileMs": 1,
+      "simMatch": "1024/1024"
+    },
+    {
+      "id": "xor",
+      "kind": "formula",
+      "w": 32,
+      "frames": 1,
+      "gates": 36,
+      "naive": 2480,
+      "ratio": 0.0145,
+      "gatesPerPixel": 0.0352,
+      "compileMs": 1,
+      "simMatch": "1024/1024"
+    }
+  ],
+  "summary": {
+    "designs": 9,
+    "meanRatio": 0.0673,
+    "meanRatioDrawn": 0.1528,
+    "preRegisteredNull": "drawn ratio >= 0.9 narrows the claim to formula pieces",
+    "nullHolds": false
+  }
+}
