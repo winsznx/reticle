@@ -175,3 +175,8 @@ main { min-height: calc(100vh - 52px - 120px); }
 .piece { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, 1fr); gap: 32px; padding-bottom: 56px; }
 @media (max-width: 900px) { .piece { grid-template-columns: 1fr; } }
 .tile.big-tile { max-width: 640px; }
+
+.cols2 > *, .hero > *, .piece > *, .stack > * { min-width: 0; }
+.code { max-width: 100%; }
+@media (max-width: 900px) { aside.panel { position: static !important; } }
+[style*="display: grid"] { grid-template-columns: minmax(0, 1fr); }

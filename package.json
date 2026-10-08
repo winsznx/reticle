@@ -5,9 +5,15 @@
   "packageManager": "pnpm@11.23.0",
   "scripts": {
     "test": "pnpm -r --if-present test",
-    "build": "pnpm -F @reticle/compile build && pnpm -F web build",
+    "test:contracts": "cd contracts && forge test",
+    "sync": "tsx scripts/sync-web-data.ts",
+    "embed": "tsx scripts/build-embed.ts",
+    "build": "pnpm sync && pnpm embed && pnpm -F web build",
     "phase0": "tsx scripts/phase0.ts",
-    "check:facts": "tsx scripts/check-facts.ts"
+    "bench": "tsx scripts/bench.ts",
+    "verify": "tsx scripts/verify.ts",
+    "check:facts": "tsx scripts/check-facts.ts",
+    "typecheck": "tsc -p tsconfig.json && pnpm -F web exec tsc --noEmit"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
