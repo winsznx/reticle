@@ -13,3 +13,5 @@ cache/
 *.log
 test-results/
 playwright-report/
+contracts/lib/
+contracts/out/
