@@ -1,0 +1,23 @@
+{
+  "name": "reticle",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.23.0",
+  "scripts": {
+    "test": "pnpm -r --if-present test",
+    "build": "pnpm -F @reticle/compile build && pnpm -F web build",
+    "phase0": "tsx scripts/phase0.ts",
+    "check:facts": "tsx scripts/check-facts.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "viem": "^2.21.0",
+    "vitest": "^2.1.0"
+  },
+  "dependencies": {
+    "@reticle/chain": "workspace:*",
+    "@reticle/compile": "workspace:*"
+  }
+}

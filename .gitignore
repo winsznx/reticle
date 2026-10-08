@@ -1,0 +1,15 @@
+internal/
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+dist/
+out/
+.vercel/
+broadcast/
+cache/
+.DS_Store
+*.log
+test-results/
+playwright-report/
