@@ -10,7 +10,9 @@
     "check:facts": "tsx scripts/check-facts.ts"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^22.10.0",
+    "terser": "^5.51.2",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0",
     "viem": "^2.21.0",

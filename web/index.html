@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Reticle: images that are circuits</title>
+    <meta name="description" content="Draw an icon or write a formula. Reticle compiles it to NAND gates and tapes it out on X Layer. Any website can show it straight from the chain, with no wallet and no gas." />
+    <meta property="og:title" content="Reticle: images that are circuits" />
+    <meta property="og:description" content="A verifiable, compressed, on-chain image format for the web. Wallet-free and gas-free for viewers." />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script>
+      try {
+        var t = localStorage.getItem("reticle-theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

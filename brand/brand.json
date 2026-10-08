@@ -1,0 +1,10 @@
+{
+  "name": "Reticle",
+  "mark": "brand/mark.svg",
+  "themes": {
+    "light": { "bg": "#F2EFE6", "ink": "#0B0B0C", "accent": "#E8A33D", "accentText": "#8A5A0B" },
+    "dark": { "bg": "#0A0A0B", "ink": "#E9E4D6", "accent": "#E8A33D", "accentText": "#E8A33D" }
+  },
+  "fonts": { "text": "Hanken Grotesk", "mono": "JetBrains Mono" },
+  "minMarkPx": 16
+}
