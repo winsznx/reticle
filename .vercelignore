@@ -1,0 +1,8 @@
+internal/
+.env
+.env.*
+film/
+node_modules/
+contracts/lib/
+contracts/out/
+contracts/cache/
