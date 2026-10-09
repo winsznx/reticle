@@ -90,7 +90,8 @@ Secret audit (\`evidence/audit.json\`, ${audit?.timestamp}):
 
 - \`.env\` and the ${audit?.localOnlyFoldersIgnored} local-only reference folder in the working tree appear in any of ${audit?.commitsScanned} commits across all refs: ${audit?.envOrLocalOnlyInHistory === 0 ? "no" : "YES"}. Tracked now: ${audit?.trackedNow === 0 ? "nothing" : "FOUND"}. All are ignored by git and by \`.vercelignore\`.
 - The deployer key value appears anywhere in history: ${audit?.deployerKeyValueInHistory ? "YES" : "no"}.
-- gitleaks over full history: ${audit?.gitleaksFindings} findings.
+- gitleaks over full history: ${audit?.gitleaksFindings} findings. Two earlier commits had a generic-api-key hit on the text of a variable name in the audit script (\`keyHits ||\`). They are code, not credentials, and are pinned by fingerprint in \`.gitleaksignore\`. Any other finding fails the audit.
+- History was rewritten once, before anything was pushed, to remove mentions of the private reference folder from two scripts. Commit hashes before that point no longer exist.
 - Production build of \`web/\`, ${audit?.distFilesScanned} text files scanned: the key appears ${audit?.distKeyHits} times, no \`VITE_\` variable is present (${(audit?.distViteVars as string[] | undefined)?.length ?? 0}), no file mentions \`PRIVATE_KEY\`. The bundle contains ${audit?.distHex64Strings} 64-hex strings: ${audit?.distHex64Explained} are public tx hashes or viem and secp256k1 library constants and ${audit?.distHex64Unexplained} are unexplained. The only \`VITE_\` variable the source reads is \`VITE_SHOW_UNVERIFIED\`, a boolean dev switch.
 - The key is read only by Node scripts from \`.env\`. The film script's wallet bridge signs in the Node process and never sends the key to the page.
 
