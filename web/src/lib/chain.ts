@@ -17,8 +17,11 @@ const xlayerParams = {
   blockExplorerUrls: ["https://www.oklink.com/xlayer"],
 };
 
-interface Eip1193 { request(args: { method: string; params?: unknown[] }): Promise<unknown> }
-export const injected = (): Eip1193 | undefined => (globalThis as { ethereum?: Eip1193 }).ethereum;
+import type { Eip1193 } from "./wallet";
+
+let selected: Eip1193 | undefined;
+export const selectProvider = (p: Eip1193 | undefined) => { selected = p; };
+export const injected = (): Eip1193 | undefined => selected ?? (globalThis as { ethereum?: Eip1193 }).ethereum;
 
 export async function connectWallet(): Promise<{ address: Address; chainId: number }> {
   const eth = injected();
@@ -35,8 +38,10 @@ export async function switchToXLayer() {
     await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId: xlayerParams.chainId }] });
   } catch (e) {
     const code = (e as { code?: number }).code;
-    if (code === 4902 || code === -32603) await eth.request({ method: "wallet_addEthereumChain", params: [xlayerParams] });
-    else throw e;
+    if (code === 4902 || code === -32603) {
+      await eth.request({ method: "wallet_addEthereumChain", params: [xlayerParams] });
+      try { await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId: xlayerParams.chainId }] }); } catch { /* most wallets switch on add */ }
+    } else throw e;
   }
 }
 

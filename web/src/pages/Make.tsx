@@ -7,7 +7,8 @@ import { PixelGrid, type Mirror, type Tool } from "../components/PixelGrid";
 import { BitmapCanvas } from "../components/ChainImage";
 import { CauseStrip, type CauseState } from "../components/CauseStrip";
 import { PRESETS, drawPathVerified } from "../lib/presets";
-import { connectWallet, injected, isRejection, oklinkTx, processor, publicClient, switchToXLayer, walletClient } from "../lib/chain";
+import { connectWallet, isRejection, oklinkTx, processor, publicClient, selectProvider, switchToXLayer, walletClient } from "../lib/chain";
+import { chainName, listWallets, XLAYER_CHAIN_ID, type DiscoveredWallet } from "../lib/wallet";
 import { okb, short } from "../lib/fmt";
 import { tapeouts } from "../lib/data";
 import { downscale, loadImageFile, thresholdBitmap } from "../lib/image";
@@ -125,11 +126,21 @@ export default function Make() {
     publicClient.getBalance({ address: wallet.address }).then(setBalance).catch(() => setBalance(null));
   }, [wallet, phase.kind]);
 
-  useEffect(() => {
-    const eth = injected() as (ReturnType<typeof injected> & { on?: (e: string, f: (...a: never[]) => void) => void }) | undefined;
-    eth?.on?.("chainChanged", ((id: string) => setWallet((w) => (w ? { ...w, chainId: parseInt(id, 16) } : w))) as never);
-    eth?.on?.("accountsChanged", ((a: Address[]) => setWallet((w) => (a[0] ? { address: a[0], chainId: w?.chainId ?? 0 } : null))) as never);
-  }, []);
+  const [wallets, setWallets] = useState<DiscoveredWallet[]>([]);
+  const [walletId, setWalletId] = useState<string | null>(null);
+  const [connectedName, setConnectedName] = useState<string | null>(null);
+  useEffect(() => { listWallets().then(setWallets); }, []);
+
+  const listeners = useRef<(() => void) | null>(null);
+  const attach = (w: DiscoveredWallet) => {
+    listeners.current?.();
+    const onChain = ((id: string) => setWallet((cur) => (cur ? { ...cur, chainId: parseInt(id, 16) } : cur))) as never;
+    const onAccounts = ((a: Address[]) => setWallet((cur) => (a[0] ? { address: a[0], chainId: cur?.chainId ?? 0 } : null))) as never;
+    w.provider.on?.("chainChanged", onChain);
+    w.provider.on?.("accountsChanged", onAccounts);
+    listeners.current = () => { w.provider.removeListener?.("chainChanged", onChain); w.provider.removeListener?.("accountsChanged", onAccounts); };
+  };
+  useEffect(() => () => listeners.current?.(), []);
 
   const pushHistory = useCallback((prev: boolean[][][]) => {
     history.current.past.push(prev);
@@ -187,7 +198,15 @@ export default function Make() {
   const liveReady = !!processor;
 
   const connect = async () => {
-    try { setWallet(await connectWallet()); } catch (e) { setPhase({ kind: "error", message: (e as Error).message }); }
+    try {
+      const list = wallets.length ? wallets : await listWallets();
+      if (!wallets.length) setWallets(list);
+      const chosen = list.find((w) => w.info.uuid === walletId) ?? list[0];
+      if (chosen) { selectProvider(chosen.provider); attach(chosen); setConnectedName(chosen.info.name); }
+      setWallet(await connectWallet());
+    } catch (e) {
+      setPhase({ kind: "error", message: isRejection(e) ? "Connection rejected in wallet." : (e as Error).message });
+    }
   };
 
   const tapeout = async () => {
@@ -238,12 +257,12 @@ export default function Make() {
         } catch { /* other event */ }
       }
       if (id === null) id = (await publicClient.readContract({ address: processor.circuits, abi: circuitsAbi, functionName: "nextId" })) as bigint;
-      const shape = await readShape(publicClient, processor.circuits, id);
+      const shape = await readShape(publicClient, processor.circuits, id, false);
       const total = shape.frames * shape.w * shape.w;
       let matched = 0;
       const chainRows: boolean[][][] = [];
       for (let t = 0; t < shape.frames; t++) {
-        const rows = await renderFrame(publicClient, processor.circuits, id, shape, t, { onRow: (_y, _r, n) => setPhase({ kind: "rendering", done: n, total: shape.w }) });
+        const rows = await renderFrame(publicClient, processor.circuits, id, shape, t, { useCache: false, onRow: (_y, _r, n) => setPhase({ kind: "rendering", done: n, total: shape.w }) });
         chainRows.push(rows);
         for (let y = 0; y < shape.w; y++) for (let x = 0; x < shape.w; x++) if (rows[y]![x] === bitmap.frames[t]![y]![x]) matched++;
       }
@@ -272,6 +291,7 @@ export default function Make() {
       case "mismatch": return { state: "bad", text: <>MISMATCH: {phase.matched}/{phase.total} pixels match chain eval for circuit #{phase.id.toString()}</> };
       case "error": return { state: "bad", text: phase.message };
       default:
+        if (wallet && wallet.chainId !== XLAYER_CHAIN_ID) return { state: "bad", text: `${connectedName ?? "Wallet"} is on ${chainName(wallet.chainId)} (${wallet.chainId}). Switch to X Layer (196) to tape out.` };
         if (compiled && "error" in compiled) return { state: "bad", text: compiled.error };
         if (mode === "upload") return { state: "idle", text: "load the image into the Draw grid to compile it" };
         if (mode === "formula" && formulaError) return { state: "bad", text: formulaError };
@@ -448,7 +468,15 @@ export default function Make() {
             {shortfall !== null && !needsNetworkSwitch ? <div className="bad" style={{ fontSize: 12 }}>Short by {okb(shortfall, 5)} OKB (includes gas headroom).</div> : null}
             <button className="btn primary" disabled={tapeoutDisabled && !(wallet === null && ok && liveReady) && !needsNetworkSwitch} onClick={onAction}>{phase.kind === "done" ? "Open piece" : tapeoutLabel}</button>
             {phase.kind === "done" ? <Link className="btn" to={`/piece/${phase.id}`}>View piece #{phase.id.toString()}</Link> : null}
-            {!injected() && <div className="faint" style={{ fontSize: 12 }}>No wallet detected. Compiling and previewing work without one.</div>}
+            {!wallet && wallets.length > 1 && (
+              <label className="field">Wallet
+                <select value={walletId ?? wallets[0]!.info.uuid} onChange={(e) => setWalletId(e.target.value)}>
+                  {wallets.map((w) => <option key={w.info.uuid} value={w.info.uuid}>{w.info.name}</option>)}
+                </select>
+              </label>
+            )}
+            {wallet && connectedName && <div className="faint" style={{ fontSize: 12 }}>via {connectedName}</div>}
+            {wallets.length === 0 && !wallet && <div className="faint" style={{ fontSize: 12 }}>No wallet detected. Compiling and previewing work without one. OKX Wallet or MetaMask will be offered here.</div>}
             {!drawPathVerified && <div className="faint" style={{ fontSize: 12 }}>Draw path not yet verified live.</div>}
           </section>
         </aside>
