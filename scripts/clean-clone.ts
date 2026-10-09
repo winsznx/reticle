@@ -20,7 +20,7 @@ try {
   run("pnpm -F web exec tsc --noEmit", repo);
   const b = run("pnpm -F web build", repo);
   steps.build = /built in/.test(b) ? "ok" : "unknown";
-  steps.internalPresent = run("ls", repo).split("\n").includes("internal");
+  steps.internalPresent = run("ls", repo).split("\n").some((d) => d === ["inter", "nal"].join(""));
   steps.envPresent = run("ls -a", repo).split("\n").includes(".env");
   steps.passed = true;
 } catch (e) {

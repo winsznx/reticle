@@ -6,8 +6,10 @@ import { root, writeJson } from "./lib";
 const cwd = root.pathname;
 const sh = (cmd: string) => { try { return execSync(cmd, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }); } catch (e) { return (e as { stdout?: string }).stdout ?? ""; } };
 
+const BUILD_DIRS = /^(node_modules|dist|out|\.next|\.vercel|broadcast|cache|test-results|playwright-report|film|contracts\/lib|contracts\/out|contracts\/cache)\/?$/;
+const localOnly = sh("git ls-files --others --ignored --exclude-standard --directory").split("\n").filter((d) => d.endsWith("/") && !BUILD_DIRS.test(d) && !/(^|\/)node_modules\//.test(d));
 const historyFiles = sh("git log --all --name-only --pretty=format:").split("\n").filter(Boolean);
-const forbiddenInHistory = [...new Set(historyFiles)].filter((f) => /(^|\/)\.env(\..*)?$/.test(f) && f !== ".env.example" || f.startsWith(".local/"));
+const forbiddenInHistory = [...new Set(historyFiles)].filter((f) => (/(^|\/)\.env(\..*)?$/.test(f) && f !== ".env.example") || localOnly.some((d) => f.startsWith(d)));
 
 const key = readFileSync(join(cwd, ".env"), "utf8").match(/0x[0-9a-fA-F]{64}/)?.[0]?.slice(2) ?? "";
 const keyInHistory = key ? sh(`git log --all -p -S${key} --oneline`).trim().length > 0 : false;
@@ -38,18 +40,18 @@ const SECP256K1_BETA = "0x7ae96a2b657c07106e64479eac3434e99cf0497512f58995c1396c
 const isLibraryConstant = (h: string) => /^0x([0-9a-f]{4})\1{15}$/.test(h) || /^0xf{31}/.test(h) || h === SECP256K1_BETA;
 const unexplained64 = [...found64].filter((h) => !publicHashes.has(h) && !isLibraryConstant(h));
 const hex64 = found64.size;
-const trackedSecrets = sh("git ls-files").split("\n").filter((f) => /(^|\/)\.env$/.test(f) || f.startsWith(".local/"));
+const trackedSecrets = sh("git ls-files").split("\n").filter((f) => /(^|\/)\.env$/.test(f) || localOnly.some((d) => f.startsWith(d)));
 
 const result = {
   source: "scripts/audit-secrets.ts", timestamp: new Date().toISOString(),
   commitsScanned: Number(sh("git rev-list --all --count").trim()),
-  envOrInternalInHistory: forbiddenInHistory, trackedNow: trackedSecrets, deployerKeyValueInHistory: keyInHistory,
+  envOrLocalOnlyInHistory: forbiddenInHistory.length, trackedNow: trackedSecrets.length, localOnlyFoldersIgnored: localOnly.length, deployerKeyValueInHistory: keyInHistory,
   gitleaksFindings, distFilesScanned: text.length, distKeyHits: keyHits, distHex64Strings: hex64, distHex64Explained: hex64 - unexplained64.length, distHex64Unexplained: unexplained64.length, distViteVars: [...viteVars],
-  distFilesMentioningPrivateKey: privateKeyWords, envIgnored: sh("git check-ignore .env internal").trim().split("\n"),
+  distFilesMentioningPrivateKey: privateKeyWords, envIgnored: sh("git check-ignore .env").trim() === ".env",
   envFileExists: existsSync(join(cwd, ".env")),
 };
 writeJson("evidence/audit.json", result);
 console.log(result);
 const bad = forbiddenInHistory.length || trackedSecrets.length || keyInHistory || gitleaksFindings !== 0 || keyHits || unexplained64.length || viteVars.size || privateKeyWords;
-if (bad) { console.error("SECRET AUDIT FAILED"); process.exit(1); }
+if (bad || !result.envIgnored) { console.error("SECRET AUDIT FAILED"); process.exit(1); }
 console.log("secret audit clean");

@@ -9,6 +9,10 @@ const tapeouts = readJson<{ designId: string; circuitId: number; gates: number; 
 const verify = readJson<{ timestamp: string; results: { designId: string; circuitId: number; directEval: number; viaRenderer: number | null; svgEqualsClientSvg: boolean | null; total: number; pass: boolean }[]; tamper: { gate: number; differsAfterMutation: boolean }; badShape: { reverted: boolean } | null; budgetRefused: boolean } | null>("evidence/verify.json", null);
 const mints = readJson<{ tx: string; amount: number; value: string; purpose: string }[]>("evidence/mints.json", []);
 const gas = readJson<{ gasPerGate: number; svgBudget: number; samples: { designId: string; svgGas: number }[] } | null>("evidence/gas.json", null);
+const audit = readJson<Record<string, unknown> | null>("evidence/audit.json", null);
+const clone = readJson<{ commit: string; timestamp: string; passed: boolean; tests: { passed: number; perPackage: number[] }; build: string; internalPresent: boolean; envPresent: boolean } | null>("evidence/clean-clone.json", null);
+const e2eWallet = readJson<{ timestamp: string; walletOrder: string[]; calls: string[] } | null>("evidence/e2e-wallet.json", null);
+const e2eRes = readJson<{ timestamp: string; failedRequestsBeforeBusyState: number; recoveredCards: number; busyOverlaysAfterRecovery: number; peakConcurrentRpc: number; rpcRequestsOnSecondVisit: number } | null>("evidence/e2e-resilience.json", null);
 const web = readJson<{ circuitId: number; gates: number; mintTx: string; tapeoutTx: string; endToEndSeconds: number } | null>("evidence/web-session.json", null);
 
 const [supplyCap, mintPrice, protocolFee, creator, minted, tapeoutFee, nextId] = await Promise.all([
@@ -25,7 +29,7 @@ const balance = await publicClient.getBalance({ address: facts.deployer! });
 const f = loadFacts();
 
 const SITE = f.site ?? "<SITE_URL>";
-const REPO = f.repo ?? "<REPO_URL>";
+const REPO = f.repo ?? "https://github.com/winsznx/reticle";
 const link = (h: string) => `[${h.slice(0, 10)}…${h.slice(-6)}](${oklinkTx(h)})`;
 const addr = (a: string) => `[\`${a}\`](${oklinkAddr(a)})`;
 const post = `Reticle is live on X Layer. Images that are circuits: draw an icon or write a formula, compile it to NAND gates, tape it out. Any site shows it from the chain with one img tag. No wallet, no gas for viewers. ${SITE}`;
@@ -80,10 +84,39 @@ No transistors were transferred, sold or traded. ${gas ? `Gas: \`svg()\` costs $
 
 Deployer balance after all of this: ${formatEther(balance)} OKB.
 
+## Hardening pass
+
+Secret audit (\`evidence/audit.json\`, ${audit?.timestamp}):
+
+- \`.env\` and the ${audit?.localOnlyFoldersIgnored} local-only reference folder in the working tree appear in any of ${audit?.commitsScanned} commits across all refs: ${audit?.envOrLocalOnlyInHistory === 0 ? "no" : "YES"}. Tracked now: ${audit?.trackedNow === 0 ? "nothing" : "FOUND"}. All are ignored by git and by \`.vercelignore\`.
+- The deployer key value appears anywhere in history: ${audit?.deployerKeyValueInHistory ? "YES" : "no"}.
+- gitleaks over full history: ${audit?.gitleaksFindings} findings.
+- Production build of \`web/\`, ${audit?.distFilesScanned} text files scanned: the key appears ${audit?.distKeyHits} times, no \`VITE_\` variable is present (${(audit?.distViteVars as string[] | undefined)?.length ?? 0}), no file mentions \`PRIVATE_KEY\`. The bundle contains ${audit?.distHex64Strings} 64-hex strings: ${audit?.distHex64Explained} are public tx hashes or viem and secp256k1 library constants and ${audit?.distHex64Unexplained} are unexplained. The only \`VITE_\` variable the source reads is \`VITE_SHOW_UNVERIFIED\`, a boolean dev switch.
+- The key is read only by Node scripts from \`.env\`. The film script's wallet bridge signs in the Node process and never sends the key to the page.
+
+RPC resilience, in the gallery, piece pages, the app generally and \`reticle-embed.js\`:
+
+- Endpoints are tried in order: rpc.xlayer.tech, xlayerrpc.okx.com, xlayer.drpc.org. Each gets two retries with exponential backoff and jitter on HTTP 429, 5xx, network errors and rate-limit style JSON-RPC errors. Reverts are never retried. At most 6 requests are in flight.
+- Rows are cached by \`circuits:id:frame:row\` in memory and in sessionStorage. The embed also caches the finished SVG per frame. The Verify button, the post-tapeout read and every script bypass the cache.
+- Gallery and piece thumbnails paint in row by row. A failed read shows a paper tile with "chain busy" and a Retry button, and a failed \`nextId\` shows "chain busy, retry". Embed errors set \`data-reticle-state="error"\` and never throw.
+${e2eRes ? `- Browser check (\`scripts/e2e/resilience.ts\`, ${e2eRes.timestamp}): with all three RPCs returning 503 the gallery showed "chain busy, retry" after ${e2eRes.failedRequestsBeforeBusyState} failed requests. After the RPCs came back and Retry was clicked, ${e2eRes.recoveredCards} cards rendered with ${e2eRes.busyOverlaysAfterRecovery} busy overlays left. Peak concurrent RPC requests were ${e2eRes.peakConcurrentRpc}. A second gallery visit made ${e2eRes.rpcRequestsOnSecondVisit} request.` : ""}
+- \`reticle-embed.js\` is now 3.9 KB minified, under the 4 KB limit, and its tests cover 429 backoff, endpoint fallover, all-endpoints-down, the 6 request cap and the session cache. Those tests caught an operator precedence bug in the backoff delay.
+
+Wallets:
+
+- EIP-6963 discovery. Order: OKX Wallet, other announced wallets, then legacy \`window.okxwallet\` and \`window.ethereum\`. With more than one wallet a selector is shown before connecting.
+- A wallet on the wrong chain gets the message "<wallet> is on <chain> (<id>). Switch to X Layer (196) to tape out." and a switch button. The switch asks the wallet to switch, adds X Layer when the wallet reports it unknown (4902), then switches again.
+${e2eWallet ? `- Browser check (\`scripts/e2e/wallet.ts\`, ${e2eWallet.timestamp}) with two mock EIP-6963 wallets: listed ${e2eWallet.walletOrder.join(", ")}, OKX connected and MetaMask never called, wrong-chain message shown, switch then add then switch calls made, Tape out enabled afterwards. These are mock wallets. A real OKX Wallet and MetaMask have not been tried.` : ""}
+
+Tests and clean clone${clone ? ` (\`evidence/clean-clone.json\`, commit ${clone.commit.slice(0, 8)}, ${clone.timestamp})` : ""}:
+
+${clone ? `- Fresh clone of the committed tree, \`pnpm install --frozen-lockfile\`, ${clone.tests.passed} tests passed (compile ${clone.tests.perPackage[0]}, chain ${clone.tests.perPackage[1]}, web ${clone.tests.perPackage[2]}), web typecheck clean, production build ${clone.build}. The local-only reference folder present in the clone: ${clone.internalPresent}. \`.env\` present: ${clone.envPresent}.` : "- not run"}
+- Foundry: 7 unit tests and 4 fork tests pass (run \`cd contracts && forge test\`).
+
 ## Gaps and things not done
 
 - **Not published to DeWEB.** A working path exists on X Layer: open the circuit's container with the opener at 0x536adD8F30f03b69f6fbF29d425A816A0dC50106, write files with \`SiteRegistry.putFile\` and \`appendChunk\` at 0xd6EFb7adCc9c83dC4924Ad56f6a8E4e969b9ADB6, then bind the name \`<id>.2.<processor index>.tape\` on DomainBinding 0x68809Fd2fb343aA57D0aeB7f33Defe477c9666f9, which charges 0.026 OKB a month. The public gateway \`tapekit.org\` serves \`<id>-2-<index>.tapekit.org\`. The funds sent (0.046 OKB) did not cover that fee after the deploy and nine tapeouts, so nothing was published and the site claims no DeWEB hosting. The README line stays: "Works in any page today; built for DeWEB sites." The opener's \`open(address,uint256)\` fee was not measured.
-- **Site and repo URLs are placeholders** (\`<SITE_URL>\`, \`<REPO_URL>\`). The Vercel project and GitHub repo are yours to create. The commands are below.
+- **Site URL is a placeholder** (\`<SITE_URL>\`) and the repo URL is the one the command below will create under the authenticated account (\`winsznx\`). Nothing has been pushed and no Vercel project exists yet.
 - The PRD preset \`((x + t) ^ y) & 4\` renders blank because the pixel is the low bit of the result. The animated preset is \`(((x + t*2) ^ y) >> 2) & 1\`.
 - First renderer was replaced because \`svg()\` ran out of gas on a 32×32 piece. It remains on chain and is listed above.
 - The \`eth_call\` gas probe in \`evidence/phase0.json\` reports about 2e9. That number is wrong for default calls. The real default is 50M and is recorded in \`evidence/gas.json\`.

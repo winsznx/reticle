@@ -6,3 +6,4 @@ node_modules/
 contracts/lib/
 contracts/out/
 contracts/cache/
+.local/

@@ -1,0 +1,19 @@
+{
+  "source": "scripts/clean-clone.ts",
+  "timestamp": "2026-10-09T01:02:33.086Z",
+  "commit": "a907140b738c3b3f05f3e42c5bfe34ed9440e865",
+  "install": "ok",
+  "tests": {
+    "passed": 58,
+    "perPackage": [
+      28,
+      12,
+      18
+    ],
+    "failed": false
+  },
+  "build": "ok",
+  "internalPresent": false,
+  "envPresent": false,
+  "passed": true
+}
