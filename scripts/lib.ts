@@ -57,6 +57,7 @@ export interface Facts {
   previousRenderers?: { address: Address; deployTx: Hex; deployBlock: number; note: string }[];
   repo?: string;
   site?: string;
+  video?: string;
 }
 
 export const loadFacts = () => readJson<Facts>("submission-facts.json", { chainId: XLAYER_ID, deployer: deployer().account.address });

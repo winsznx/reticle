@@ -29,6 +29,7 @@ const balance = await publicClient.getBalance({ address: facts.deployer! });
 const f = loadFacts();
 
 const SITE = f.site ?? "<SITE_URL>";
+const VIDEO = (f as { video?: string }).video ?? "<VIDEO_URL>";
 const REPO = f.repo ?? "https://github.com/winsznx/reticle";
 const link = (h: string) => `[${h.slice(0, 10)}…${h.slice(-6)}](${oklinkTx(h)})`;
 const addr = (a: string) => `[\`${a}\`](${oklinkAddr(a)})`;
@@ -117,7 +118,7 @@ ${clone ? `- Fresh clone of the committed tree, \`pnpm install --frozen-lockfile
 ## Gaps and things not done
 
 - **Not published to DeWEB.** A working path exists on X Layer: open the circuit's container with the opener at 0x536adD8F30f03b69f6fbF29d425A816A0dC50106, write files with \`SiteRegistry.putFile\` and \`appendChunk\` at 0xd6EFb7adCc9c83dC4924Ad56f6a8E4e969b9ADB6, then bind the name \`<id>.2.<processor index>.tape\` on DomainBinding 0x68809Fd2fb343aA57D0aeB7f33Defe477c9666f9, which charges 0.026 OKB a month. The public gateway \`tapekit.org\` serves \`<id>-2-<index>.tapekit.org\`. The funds sent (0.046 OKB) did not cover that fee after the deploy and nine tapeouts, so nothing was published and the site claims no DeWEB hosting. The README line stays: "Works in any page today; built for DeWEB sites." The opener's \`open(address,uint256)\` fee was not measured.
-- **Site URL is a placeholder** (\`<SITE_URL>\`) and the repo URL is the one the command below will create under the authenticated account (\`winsznx\`). Nothing has been pushed and no Vercel project exists yet.
+- Site, repo and video links are filled in from \`submission-facts.json\`.
 - The PRD preset \`((x + t) ^ y) & 4\` renders blank because the pixel is the low bit of the result. The animated preset is \`(((x + t*2) ^ y) >> 2) & 1\`.
 - First renderer was replaced because \`svg()\` ran out of gas on a 32×32 piece. It remains on chain and is listed above.
 - The \`eth_call\` gas probe in \`evidence/phase0.json\` reports about 2e9. That number is wrong for default calls. The real default is 50M and is recorded in \`evidence/gas.json\`.
@@ -126,34 +127,13 @@ ${clone ? `- Fresh clone of the committed tree, \`pnpm install --frozen-lockfile
 - Verified by hand only on Chromium (Playwright). Not tried on Safari or Firefox, and not with a real OKX or MetaMask wallet.
 - Not audited. Upstream contracts are upgradeable beacons.
 
-## Commands for you
+## Deployed
 
-Push the repo (creates it public, nothing is pushed until you run this):
+- Site: ${SITE} (Vercel CLI deploy, no Git integration)
+- Repo: ${REPO}
+- Video: ${VIDEO}
 
-\`\`\`bash
-cd /Users/mac/reticle
-gh repo create reticle --public --source . --push
-\`\`\`
-
-Vercel link and deploy:
-
-\`\`\`bash
-cd /Users/mac/reticle
-pnpm dlx vercel@latest login
-pnpm dlx vercel@latest link          # create or pick the project, keep the root directory as /
-pnpm dlx vercel@latest --prod        # uses vercel.json: pnpm -F web build, output web/dist
-\`\`\`
-
-After the first deploy, put the site URL in \`submission-facts.json\` (\`"site"\`), run \`pnpm build\`, and deploy again so the embed snippets and OG tags point at it.
-
-Film recording against the deployed site (needs ffmpeg and \`npx playwright install chromium\`):
-
-\`\`\`bash
-BASE_URL=https://YOUR-SITE pnpm exec tsx scripts/film/capture.ts          # reads only, stops before any transaction
-BASE_URL=https://YOUR-SITE pnpm exec tsx scripts/film/capture.ts --live   # also tapes out, signs with the key in .env
-\`\`\`
-
-Output goes to \`film/\` (webm, mp4, gif, marks.json) and the gif is copied to \`docs/session.gif\`.
+Redeploy after a change: \`pnpm build\` then \`vercel deploy --prod --yes --name reticle\`. Re-cut the film with \`python3 scripts/film/edit.py\`.
 
 ## Submission form draft
 
@@ -162,7 +142,7 @@ Output goes to \`film/\` (webm, mp4, gif, marks.json) and the gif is copied to \
 - **Repo:** ${REPO}
 - **Site:** ${SITE}
 - **Embed demo:** ${SITE}/embed
-- **Demo video:** <VIDEO_URL>
+- **Demo video:** ${VIDEO}
 - **Description (under 120 words):** Reticle makes images that are circuits. Draw a logo, icon, favicon or badge, drop in an image, or write a formula. Reticle compiles it to NAND gates and tapes it out on X Layer. Any website can then show it straight from the chain with one img tag, with no wallet and no gas for the viewer. Every row of every image is a live eval of the circuit, and an on-chain renderer returns it as SVG. Each gate burns one Reticle transistor, so smaller circuits cost less. Supply 1,048,576, price 0.00003 OKB, immutable and disclosed on chain. All nine seed artworks verify pixel-exact from chain.
 
 ## X post

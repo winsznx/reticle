@@ -4,6 +4,8 @@
 
 ![A real session: draw, compile, tape out, read back from chain](docs/session.gif)
 
+[Watch the demo film](https://youtu.be/sqZFNUhkDBE) · [Live site](https://reticle-woad.vercel.app)
+
 The picture can't be pre-rendered, because the chain's own gates are what draw it.
 
 Works in any page today; built for DeWEB sites.
