@@ -23,10 +23,10 @@ const dist = join(cwd, "web/dist");
 const walk = (d: string): string[] => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
 const text = walk(dist).filter((f) => /\.(js|html|css|json|svg|txt)$/.test(f));
 const found64 = new Set<string>();
-let keyHits = 0, viteVars = new Set<string>(), privateKeyWords = 0;
+let bundleKeyMatches = 0, viteVars = new Set<string>(), privateKeyWords = 0;
 for (const f of text) {
   const c = readFileSync(f, "utf8");
-  if (key && c.includes(key)) keyHits++;
+  if (key && c.includes(key)) bundleKeyMatches++;
   for (const m of c.matchAll(/\b0x[0-9a-fA-F]{64}\b/g)) found64.add(m[0].toLowerCase());
   for (const m of c.matchAll(/VITE_[A-Z_]+/g)) viteVars.add(m[0]);
   if (/PRIVATE_KEY/i.test(c)) privateKeyWords++;
@@ -46,12 +46,12 @@ const result = {
   source: "scripts/audit-secrets.ts", timestamp: new Date().toISOString(),
   commitsScanned: Number(sh("git rev-list --all --count").trim()),
   envOrLocalOnlyInHistory: forbiddenInHistory.length, trackedNow: trackedSecrets.length, localOnlyFoldersIgnored: localOnly.length, deployerKeyValueInHistory: keyInHistory,
-  gitleaksFindings, distFilesScanned: text.length, distKeyHits: keyHits, distHex64Strings: hex64, distHex64Explained: hex64 - unexplained64.length, distHex64Unexplained: unexplained64.length, distViteVars: [...viteVars],
+  gitleaksFindings, distFilesScanned: text.length, distKeyHits: bundleKeyMatches, distHex64Strings: hex64, distHex64Explained: hex64 - unexplained64.length, distHex64Unexplained: unexplained64.length, distViteVars: [...viteVars],
   distFilesMentioningPrivateKey: privateKeyWords, envIgnored: sh("git check-ignore .env").trim() === ".env",
   envFileExists: existsSync(join(cwd, ".env")),
 };
 writeJson("evidence/audit.json", result);
 console.log(result);
-const bad = forbiddenInHistory.length || trackedSecrets.length || keyInHistory || gitleaksFindings !== 0 || keyHits || unexplained64.length || viteVars.size || privateKeyWords;
+const bad = forbiddenInHistory.length || trackedSecrets.length || keyInHistory || gitleaksFindings !== 0 || bundleKeyMatches || unexplained64.length || viteVars.size || privateKeyWords;
 if (bad || !result.envIgnored) { console.error("SECRET AUDIT FAILED"); process.exit(1); }
 console.log("secret audit clean");

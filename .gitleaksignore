@@ -1,0 +1,2 @@
+# False positive: a variable name ('keyHits ||') in scripts/audit-secrets.ts, not a credential.
+2b22ff371fc479963b2c62eb4f4e173b73458923:scripts/audit-secrets.ts:generic-api-key:53
