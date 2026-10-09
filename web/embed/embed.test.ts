@@ -41,12 +41,12 @@ async function load(renderer: string) {
   document.body.innerHTML = `<img id="a" data-reticle="${CIRCUITS}:3" data-frame="0" data-verify>`;
   new Function(code)();
   const img = document.getElementById("a") as HTMLImageElement;
-  await vi.waitFor(() => expect(img.getAttribute("data-reticle-state")).not.toBe("loading"), { timeout: 2000 });
+  await vi.waitFor(() => expect(img.getAttribute("data-reticle-state")).not.toBe("loading"), { timeout: 12000 });
   return img;
 }
 
 describe("reticle-embed", () => {
-  beforeEach(() => { vi.unstubAllGlobals(); });
+  beforeEach(() => { vi.unstubAllGlobals(); sessionStorage.clear(); });
 
   it("stays under 4 KB minified", async () => {
     const min = await minify(src.replace("__RENDERER__", RENDERER).replace("__GAS_PER_GATE__", "12000").replace("__GAS_BUDGET__", "1000000000"), { compress: { passes: 2 }, mangle: true });
@@ -76,6 +76,64 @@ describe("reticle-embed", () => {
     const calls = mockRpc({ rendererFails: false });
     await load("");
     expect(calls).not.toContain("0xb9a4e835");
+  });
+
+  it("retries a 429 with backoff and then succeeds", async () => {
+    let first = true;
+    const calls = mockRpc({ rendererFails: false });
+    const inner = globalThis.fetch;
+    vi.stubGlobal("fetch", async (u: string, init: { body: string }) => {
+      if (first) { first = false; return { status: 429, json: async () => ({}) }; }
+      return inner(u, init as never);
+    });
+    const img = await load(RENDERER);
+    expect(img.getAttribute("data-reticle-state")).toBe("ok");
+    expect(calls.length).toBeGreaterThan(0);
+  }, 20000);
+
+  it("falls over to the next endpoint after repeated 5xx", async () => {
+    const urls: string[] = [];
+    const inner = mockRpc({ rendererFails: false });
+    void inner;
+    const base = globalThis.fetch;
+    vi.stubGlobal("fetch", async (u: string, init: { body: string }) => {
+      urls.push(u);
+      if (u === "https://rpc.xlayer.tech") return { status: 503, json: async () => ({}) };
+      return base(u, init as never);
+    });
+    const img = await load(RENDERER);
+    expect(img.getAttribute("data-reticle-state")).toBe("ok");
+    expect(urls[0]).toBe("https://rpc.xlayer.tech");
+    expect(urls).toContain("https://xlayerrpc.okx.com");
+  }, 20000);
+
+  it("shows an error state instead of throwing when every endpoint is down", async () => {
+    vi.stubGlobal("fetch", async () => { throw new TypeError("network down"); });
+    const img = await load(RENDERER);
+    expect(img.getAttribute("data-reticle-state")).toBe("error");
+  }, 20000);
+
+  it("never has more than 6 requests in flight", async () => {
+    let inFlight = 0, peak = 0;
+    const base = (mockRpc({ rendererFails: true }), globalThis.fetch);
+    vi.stubGlobal("fetch", async (u: string, init: { body: string }) => {
+      inFlight++; peak = Math.max(peak, inFlight);
+      await new Promise((r) => setTimeout(r, 5));
+      inFlight--;
+      return base(u, init as never);
+    });
+    await load(RENDERER);
+    expect(peak).toBeLessThanOrEqual(6);
+  });
+
+  it("serves a second render from the session cache with no network", async () => {
+    const calls = mockRpc({ rendererFails: false });
+    await load(RENDERER);
+    const first = calls.length;
+    const img = await load(RENDERER);
+    expect(img.getAttribute("data-reticle-state")).toBe("ok");
+    expect(img.title).toContain("session cache");
+    expect(calls.length).toBe(first);
   });
 
   it("marks malformed attributes as errors without throwing", async () => {

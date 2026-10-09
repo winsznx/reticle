@@ -9,7 +9,7 @@ const filled = src
   .replace("__RENDERER__", facts.renderer?.address ?? "")
   .replace("__GAS_PER_GATE__", String(gas.gasPerGate ?? 12000))
   .replace("__GAS_BUDGET__", String(gas.svgBudget ?? 40_000_000));
-const min = await minify(filled, { compress: { passes: 2 }, mangle: true, format: { comments: false } });
+const min = await minify(filled, { compress: { passes: 3, unsafe: true }, mangle: { toplevel: true }, format: { comments: false } });
 const code = min.code!;
 writeFileSync(new URL("web/public/reticle-embed.js", root), code);
 const bytes = Buffer.byteLength(code);
