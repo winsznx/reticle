@@ -10,7 +10,7 @@ const verify = readJson<{ timestamp: string; results: { designId: string; circui
 const mints = readJson<{ tx: string; amount: number; value: string; purpose: string }[]>("evidence/mints.json", []);
 const gas = readJson<{ gasPerGate: number; svgBudget: number; samples: { designId: string; svgGas: number }[] } | null>("evidence/gas.json", null);
 const audit = readJson<Record<string, unknown> | null>("evidence/audit.json", null);
-const clone = readJson<{ commit: string; timestamp: string; passed: boolean; tests: { passed: number; perPackage: number[] }; build: string; internalPresent: boolean; envPresent: boolean } | null>("evidence/clean-clone.json", null);
+const clone = readJson<{ commit: string; timestamp: string; passed: boolean; tests: { passed: number; perPackage: number[] }; build: string; localOnlyPresent: boolean; envPresent: boolean } | null>("evidence/clean-clone.json", null);
 const e2eWallet = readJson<{ timestamp: string; walletOrder: string[]; calls: string[] } | null>("evidence/e2e-wallet.json", null);
 const e2eRes = readJson<{ timestamp: string; failedRequestsBeforeBusyState: number; recoveredCards: number; busyOverlaysAfterRecovery: number; peakConcurrentRpc: number; rpcRequestsOnSecondVisit: number } | null>("evidence/e2e-resilience.json", null);
 const web = readJson<{ circuitId: number; gates: number; mintTx: string; tapeoutTx: string; endToEndSeconds: number } | null>("evidence/web-session.json", null);
@@ -110,7 +110,7 @@ ${e2eWallet ? `- Browser check (\`scripts/e2e/wallet.ts\`, ${e2eWallet.timestamp
 
 Tests and clean clone${clone ? ` (\`evidence/clean-clone.json\`, commit ${clone.commit.slice(0, 8)}, ${clone.timestamp})` : ""}:
 
-${clone ? `- Fresh clone of the committed tree, \`pnpm install --frozen-lockfile\`, ${clone.tests.passed} tests passed (compile ${clone.tests.perPackage[0]}, chain ${clone.tests.perPackage[1]}, web ${clone.tests.perPackage[2]}), web typecheck clean, production build ${clone.build}. The local-only reference folder present in the clone: ${clone.internalPresent}. \`.env\` present: ${clone.envPresent}.` : "- not run"}
+${clone ? `- Fresh clone of the committed tree, \`pnpm install --frozen-lockfile\`, ${clone.tests.passed} tests passed (compile ${clone.tests.perPackage[0]}, chain ${clone.tests.perPackage[1]}, web ${clone.tests.perPackage[2]}), web typecheck clean, production build ${clone.build}. The local-only reference folder present in the clone: ${clone.localOnlyPresent}. \`.env\` present: ${clone.envPresent}.` : "- not run"}
 - Foundry: 7 unit tests and 4 fork tests pass (run \`cd contracts && forge test\`).
 
 ## Gaps and things not done
