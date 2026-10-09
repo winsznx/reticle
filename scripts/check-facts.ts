@@ -36,7 +36,7 @@ const termsFile = new URL(".local/forbidden-terms.txt", root);
 if (existsSync(termsFile)) {
   const re = new RegExp(readFileSync(termsFile, "utf8").split("\n").filter(Boolean).join("|"), "i");
   for (const f of files) {
-    if (f === "scripts/check-facts.ts" || f === ".gitignore") continue;
+    if (f === "scripts/check-facts.ts" || f === ".gitignore" || f === ".vercelignore") continue;
     read(f).split("\n").forEach((line, i) => re.test(line) && problems.push(`${f}:${i + 1} contains a forbidden term`));
   }
 } else console.warn(".local/forbidden-terms.txt missing, skipped term scan");

@@ -14,7 +14,10 @@ export interface ChainFrameState {
   error: string | null;
 }
 
-export function useChainFrame(circuits: Address, id: bigint, frame: number, enabled = true): ChainFrameState {
+export interface ChainFrame extends ChainFrameState { retry: () => void }
+
+export function useChainFrame(circuits: Address, id: bigint, frame: number, enabled = true): ChainFrame {
+  const [nonce, setNonce] = useState(0);
   const [state, setState] = useState<ChainFrameState>(() => {
     const hit = cache.get(key(circuits, id, frame));
     return hit ? { shape: hit.shape, rows: hit.rows, done: true, ms: hit.ms, error: null } : { shape: null, rows: [], done: false, ms: null, error: null };
@@ -22,6 +25,7 @@ export function useChainFrame(circuits: Address, id: bigint, frame: number, enab
 
   useEffect(() => {
     if (!enabled) return;
+    setState((s) => (s.error ? { ...s, error: null } : s));
     const k = key(circuits, id, frame);
     const hit = cache.get(k);
     if (hit) {
@@ -50,9 +54,9 @@ export function useChainFrame(circuits: Address, id: bigint, frame: number, enab
       }
     })();
     return () => ctrl.abort();
-  }, [circuits, id, frame, enabled]);
+  }, [circuits, id, frame, enabled, nonce]);
 
-  return state;
+  return { ...state, retry: () => setNonce((n) => n + 1) };
 }
 
 export function drawRows(canvas: HTMLCanvasElement, rows: boolean[][], w: number) {
@@ -92,6 +96,7 @@ export function ChainImage({ circuits, id, frame = 0, lazy = false, onState, lab
 
   const st = useChainFrame(circuits, id, frame, visible);
   useEffect(() => { onState?.(st); }, [st, onState]);
+  const showBusy = !!st.error;
 
   const canvas = useRef<HTMLCanvasElement>(null);
   const w = st.shape?.w ?? 16;
@@ -101,7 +106,12 @@ export function ChainImage({ circuits, id, frame = 0, lazy = false, onState, lab
     <div ref={wrap} className="tile" style={{ aspectRatio: "1 / 1" }}>
       <canvas ref={canvas} role="img" aria-label={label ?? `Circuit ${id.toString()} rendered from chain`} />
       {!st.done && !st.error && <span className="sk" />}
-      {st.error && <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "#b3261e", font: "12px var(--font-mono)", lineHeight: 1.3, padding: 8, textAlign: "center" }}>RPC error</span>}
+      {showBusy && (
+        <span className="busy" role="alert">
+          <span>chain busy</span>
+          <button className="btn sm" onClick={(e) => { e.preventDefault(); e.stopPropagation(); st.retry(); }}>Retry</button>
+        </span>
+      )}
     </div>
   );
 }

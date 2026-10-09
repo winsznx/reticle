@@ -51,7 +51,7 @@ export default function Piece() {
         } catch { /* gas or RPC limit, fall through to the per-row path */ }
       }
       const fresh = await Promise.all(Array.from({ length: shape.w }, async (_, y) => {
-        return evalRow(publicClient, processor!.circuits, id, shape, frame, y);
+        return evalRow(publicClient, processor!.circuits, id, shape, frame, y, false);
       }));
       const matched = fresh.flat().filter((p, i) => p === rows.flat()[i]).length;
       setVerify({ path: "rendered from chain via direct eval", match: matched === shape.w * shape.w, detail: `${matched}/${shape.w * shape.w} pixels match a second independent read` });

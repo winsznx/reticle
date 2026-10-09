@@ -15,7 +15,7 @@ Works in any page today; built for DeWEB sites.
 <img data-reticle="0x9FcbE4974C761d361d36CEE6734e381843a072BC:7" data-verify width="256" height="256">
 ```
 
-`reticle-embed.js` is 3 KB, has no dependencies and needs no wallet, key or backend. It reads the circuit over a public X Layer RPC, asks `ReticleRenderer.svg()` for the picture when the gas fits and falls back to one `eval` per row when it does not. `data-verify` adds a tooltip with the block it rendered at. See the `/embed` page for a live example.
+`reticle-embed.js` is under 4 KB (3.9 KB minified), has no dependencies and needs no wallet, key or backend. It reads the circuit over public X Layer RPCs (three, in order, with backoff on 429 and 5xx, six requests at a time, rows cached in sessionStorage), asks `ReticleRenderer.svg()` for the picture when the gas fits and falls back to one `eval` per row when it does not. `data-verify` adds a tooltip with the block it rendered at. See the `/embed` page for a live example.
 
 ## What is on chain
 

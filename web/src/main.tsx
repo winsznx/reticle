@@ -5,6 +5,9 @@ import "@fontsource-variable/hanken-grotesk";
 import "@fontsource-variable/jetbrains-mono";
 import "./styles/global.css";
 import App from "./App";
+import { SessionStore, setRowStore } from "@reticle/chain";
+
+setRowStore(new SessionStore());
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

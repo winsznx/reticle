@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { circuitsAbi } from "@reticle/chain";
+import { circuitsAbi, readShape } from "@reticle/chain";
 import { ChainImage } from "../components/ChainImage";
 import { designById, tapeoutByCircuit } from "../lib/data";
 import { processor, publicClient } from "../lib/chain";
@@ -12,10 +12,12 @@ export default function Gallery() {
   const [items, setItems] = useState<Item[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sort, setSort] = useState<Sort>("newest");
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!processor) return;
     let alive = true;
+    setError(null);
     (async () => {
       try {
         const next = await publicClient.readContract({ address: processor!.circuits, abi: circuitsAbi, functionName: "nextId" });
@@ -24,16 +26,15 @@ export default function Gallery() {
         if (alive) setItems(list);
         await Promise.all(ids.map(async (id) => {
           try {
-            const [nIn, nOut, , gates] = await publicClient.readContract({ address: processor!.circuits, abi: circuitsAbi, functionName: "circuitInfo", args: [BigInt(id)] });
-            const yBits = Math.log2(nOut);
-            const it = { id, gates, w: nOut, frames: 1 << Math.max(0, nIn - yBits), ok: true };
+            const shape = await readShape(publicClient, processor!.circuits, BigInt(id));
+            const it = { id, gates: shape.gates, w: shape.w, frames: shape.frames, ok: true };
             if (alive) setItems((cur) => cur?.map((x) => (x.id === id ? it : x)) ?? null);
           } catch { /* leave the card in loading state */ }
         }));
       } catch (e) { if (alive) setError((e as Error).message); }
     })();
     return () => { alive = false; };
-  }, []);
+  }, [attempt]);
 
   const sorted = useMemo(() => {
     if (!items) return [];
@@ -61,7 +62,12 @@ export default function Gallery() {
         </div>
       </div>
       {!processor && <div className="panel"><div className="body">The Reticle processor is not deployed yet.</div></div>}
-      {error && <div className="bad" role="alert">RPC error: {error}</div>}
+      {error && (
+        <div className="panel" role="alert"><div className="body" style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+          <span>chain busy, retry</span>
+          <button className="btn sm" onClick={() => setAttempt((n) => n + 1)}>Retry</button>
+        </div></div>
+      )}
       {items && items.length === 0 && <div className="panel"><div className="body">No circuits taped out yet. <Link to="/make">Make the first one.</Link></div></div>}
       <div className="archive">
         {sorted.map((it) => {

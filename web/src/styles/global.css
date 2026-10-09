@@ -181,3 +181,5 @@ main { min-height: calc(100vh - 52px - 120px); }
 @media (max-width: 900px) { aside.panel { position: static !important; } }
 [style*="display: grid"] { grid-template-columns: minmax(0, 1fr); }
 .code pre { white-space: pre-wrap; word-break: break-all; padding-right: 80px; }
+.tile .busy { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 8px; background: color-mix(in srgb, var(--paper) 86%, transparent); color: #0b0b0c; font: 12px var(--font-mono); line-height: 1.2; }
+.tile .busy .btn { color: #0b0b0c; border-color: #0b0b0c; }
