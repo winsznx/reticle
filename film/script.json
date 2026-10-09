@@ -1,0 +1,107 @@
+{
+  "source": "~/Downloads/reticle.mp4",
+  "crop": {
+    "x": 232,
+    "y": 0,
+    "w": 3368,
+    "h": 2024
+  },
+  "segments": [
+    {
+      "id": "landing",
+      "start": 0,
+      "end": 20,
+      "speed": 1
+    },
+    {
+      "id": "draw",
+      "start": 20,
+      "end": 60,
+      "speed": 2
+    },
+    {
+      "id": "connect",
+      "start": 60,
+      "end": 80,
+      "speed": 1.5
+    },
+    {
+      "id": "confirm",
+      "start": 80,
+      "end": 96,
+      "speed": 2
+    },
+    {
+      "id": "tapeout",
+      "start": 96,
+      "end": 116,
+      "speed": 1.2
+    },
+    {
+      "id": "piece",
+      "start": 116,
+      "end": 132,
+      "speed": 1
+    },
+    {
+      "id": "explorer",
+      "start": 199,
+      "end": 210,
+      "speed": 1
+    },
+    {
+      "id": "share",
+      "start": 228,
+      "end": 245,
+      "speed": 1
+    }
+  ],
+  "endCardSeconds": 9,
+  "lines": [
+    {
+      "segment": "landing",
+      "offset": 0.5,
+      "text": "This is Reticle. Images that are circuits. On TapeOut, a circuit is a hex blob nobody can see. Reticle turns that blob into a picture you can draw, and read back from the chain."
+    },
+    {
+      "segment": "draw",
+      "offset": 0.5,
+      "text": "Draw an icon on a sixteen by sixteen grid. As you paint, the compiler turns each pixel column into NAND gates, and shows the gate count against a naive netlist. This one ends up at sixty gates."
+    },
+    {
+      "segment": "connect",
+      "offset": 0.3,
+      "text": "Connect OKX Wallet. The cost is read from the chain: thirty millionths of an OKB of ink per gate, plus the tapeout fee."
+    },
+    {
+      "segment": "confirm",
+      "offset": 0.3,
+      "text": "Two confirmations. One mints the ink. One tapes the circuit out."
+    },
+    {
+      "segment": "tapeout",
+      "offset": 0.3,
+      "text": "Each gate burns one Reticle transistor. Then the page reads the circuit back from X Layer, one row at a time, and checks every pixel against the drawing. Two hundred fifty six of two hundred fifty six match."
+    },
+    {
+      "segment": "piece",
+      "offset": 0.5,
+      "text": "Circuit eleven is live. The same page gives you the embed: one script tag and one image tag. No wallet, no gas for the viewer. The image is drawn by the chain's own gates."
+    },
+    {
+      "segment": "explorer",
+      "offset": 0.3,
+      "text": "On the X Layer explorer, the tapeout minted circuit eleven and burned sixty transistors, one per gate."
+    },
+    {
+      "segment": "share",
+      "offset": 0.5,
+      "text": "You can also download the SVG or PNG, a thirty two pixel favicon, or a share card. Nine seed circuits verify pixel exact, through direct eval and through our on-chain renderer."
+    },
+    {
+      "segment": "endcard",
+      "offset": 0.6,
+      "text": "Reticle. Images that are circuits. Live on X Layer. Contracts are TapeOut upgradeable beacons, unaudited."
+    }
+  ]
+}

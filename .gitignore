@@ -19,3 +19,6 @@ film/*.webm
 film/*.mp4
 .local/
 .vercel
+film/work/
+film/edit-timeline.json
+film/contact-sheet*.png
