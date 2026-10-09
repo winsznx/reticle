@@ -18,3 +18,4 @@ contracts/out/
 film/*.webm
 film/*.mp4
 .local/
+.vercel

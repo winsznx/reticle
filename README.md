@@ -11,7 +11,7 @@ Works in any page today; built for DeWEB sites.
 ## Use an image on your site
 
 ```html
-<script src="https://YOUR-SITE/reticle-embed.js" defer></script>
+<script src="https://reticle-woad.vercel.app/reticle-embed.js" defer></script>
 <img data-reticle="0x9FcbE4974C761d361d36CEE6734e381843a072BC:7" data-verify width="256" height="256">
 ```
 

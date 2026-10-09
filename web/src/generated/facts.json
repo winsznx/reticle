@@ -26,5 +26,7 @@
       "deployBlock": 72732867,
       "note": "replaced: svg() built its string with quadratic memory growth and exceeded the 50M eth_call gas cap"
     }
-  ]
+  ],
+  "site": "https://reticle-woad.vercel.app",
+  "repo": "https://github.com/winsznx/reticle"
 }
