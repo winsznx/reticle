@@ -1,5 +1,6 @@
 /* Browser check of wallet discovery and chain handling with mock EIP-6963 wallets. Reads only, sends nothing. */
 import { chromium } from "playwright";
+import { writeJson } from "../lib";
 
 const base = process.env.BASE_URL ?? "http://localhost:4391";
 const browser = await chromium.launch();
@@ -46,5 +47,6 @@ await page.getByRole("button", { name: "Switch to X Layer" }).click();
 await page.getByRole("button", { name: /^Tape out$/ }).waitFor({ timeout: 10_000 });
 const need = ["okx:wallet_switchEthereumChain", "okx:wallet_addEthereumChain"];
 for (const n of need) if (!log.includes(n)) throw new Error(`missing ${n} in ${log}`);
+writeJson("evidence/e2e-wallet.json", { source: "scripts/e2e/wallet.ts", timestamp: new Date().toISOString(), passed: true, walletOrder: options, calls: log });
 console.log("wallet e2e passed:", log.join(" "));
 await browser.close();

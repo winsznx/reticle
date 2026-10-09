@@ -1,0 +1,10 @@
+{
+  "source": "scripts/e2e/resilience.ts",
+  "timestamp": "2026-10-09T01:01:41.780Z",
+  "failedRequestsBeforeBusyState": 9,
+  "busyStateShown": true,
+  "recoveredCards": 10,
+  "busyOverlaysAfterRecovery": 0,
+  "peakConcurrentRpc": 6,
+  "rpcRequestsOnSecondVisit": 1
+}

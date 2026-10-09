@@ -1,0 +1,21 @@
+{
+  "source": "scripts/audit-secrets.ts",
+  "timestamp": "2026-10-09T01:00:55.931Z",
+  "commitsScanned": 16,
+  "envOrInternalInHistory": [],
+  "trackedNow": [],
+  "deployerKeyValueInHistory": false,
+  "gitleaksFindings": 0,
+  "distFilesScanned": 12,
+  "distKeyHits": 0,
+  "distHex64Strings": 17,
+  "distHex64Explained": 17,
+  "distHex64Unexplained": 0,
+  "distViteVars": [],
+  "distFilesMentioningPrivateKey": 0,
+  "envIgnored": [
+    ".env",
+    "internal"
+  ],
+  "envFileExists": true
+}
