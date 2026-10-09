@@ -1,5 +1,6 @@
 import { bytesToHex, hexToBytes, type Address, type PublicClient } from "viem";
 import { circuitsAbi } from "./abi";
+import { rowKey, rowStore } from "./cache";
 import { inputBytes, unpackBits } from "@reticle/compile";
 
 export interface CircuitShape {
@@ -24,33 +25,47 @@ export function conformShape(nIn: number, nOut: number, nState: number, gates: n
   return { nIn, nOut, gates, w: nOut, frames: 1 << (nIn - yBits), yBits };
 }
 
-export async function readShape(client: PublicClient, circuits: Address, id: bigint): Promise<CircuitShape> {
+export async function readShape(client: PublicClient, circuits: Address, id: bigint, useCache = true): Promise<CircuitShape> {
+  const store = useCache ? rowStore() : null;
+  const key = rowKey(circuits, id, 0, "shape");
+  const hit = store?.get(key);
+  if (hit) {
+    const [nIn, nOut, nState, gates] = hit.split(",").map(Number) as [number, number, number, number];
+    return conformShape(nIn, nOut, nState, gates);
+  }
   const [nIn, nOut, nState, gates] = await client.readContract({ address: circuits, abi: circuitsAbi, functionName: "circuitInfo", args: [id] });
+  store?.set(key, `${nIn},${nOut},${nState},${gates}`);
   return conformShape(nIn, nOut, nState, gates);
 }
 
-export async function evalRow(client: PublicClient, circuits: Address, id: bigint, shape: CircuitShape, frame: number, y: number): Promise<boolean[]> {
+export async function evalRow(client: PublicClient, circuits: Address, id: bigint, shape: CircuitShape, frame: number, y: number, useCache = true): Promise<boolean[]> {
+  const store = useCache ? rowStore() : null;
+  const key = rowKey(circuits, id, frame, y);
+  const hit = store?.get(key);
+  if (hit) return unpackBits(hexToBytes(hit as `0x${string}`), shape.w);
   const input = inputBytes(y | (frame << shape.yBits), shape.nIn);
   const out = await client.readContract({ address: circuits, abi: circuitsAbi, functionName: "eval", args: [id, bytesToHex(input)] });
+  store?.set(key, out);
   return unpackBits(hexToBytes(out), shape.w);
 }
 
 export interface RenderOptions {
   concurrency?: number;
+  useCache?: boolean;
   onRow?: (y: number, row: boolean[], done: number) => void;
   signal?: AbortSignal;
 }
 
 export async function renderFrame(client: PublicClient, circuits: Address, id: bigint, shape: CircuitShape, frame: number, opts: RenderOptions = {}): Promise<boolean[][]> {
   const rows: boolean[][] = new Array(shape.w);
-  const concurrency = opts.concurrency ?? 8;
+  const concurrency = opts.concurrency ?? 6;
   let next = 0;
   let done = 0;
   const worker = async () => {
     while (next < shape.w) {
       if (opts.signal?.aborted) throw new DOMException("aborted", "AbortError");
       const y = next++;
-      rows[y] = await evalRow(client, circuits, id, shape, frame, y);
+      rows[y] = await evalRow(client, circuits, id, shape, frame, y, opts.useCache ?? true);
       done++;
       opts.onRow?.(y, rows[y]!, done);
     }
